@@ -1,0 +1,19 @@
+name: Portable core tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Install C++ compiler
+        run: sudo apt-get update && sudo apt-get install -y g++
+      - name: Compile portable tests
+        run: g++ -std=c++17 -Wall -Wextra -Werror -pedantic src/capture_core.cpp tests/test_capture_core.cpp -o capture-tests
+      - name: Run tests
+        run: ./capture-tests
