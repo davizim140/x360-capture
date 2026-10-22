@@ -1,11 +1,14 @@
-# Estado — etapa 2
+# X360 Capture — Stage 3 status
+- [x] Portable recorder state machine
+- [x] RGBA buffer-size validation
+- [x] Validated RGBA frame contract
+- [x] Abstract source/sink interfaces
+- [x] CI tests for core and frame contract
+- [ ] Xbox 360 SDK/toolchain integration
+- [ ] Real gameplay framebuffer acquisition (not implemented)
+- [ ] Real USB file output (not implemented)
+- [ ] Video encoder/container (not implemented)
+- [ ] Build/test on Xbox 360 RGH/Aurora (not performed)
+- [ ] Working `.xex` (not produced)
 
-- [x] Núcleo C++ portável.
-- [x] Testes determinísticos.
-- [x] Workflow CI para compilar e executar os testes.
-- [ ] Projeto de título xsdk integrado.
-- [ ] XEX gerado e validado.
-- [ ] Teste no Xbox 360 RGH.
-- [ ] Detecção e escrita USB testadas no console.
-- [ ] Captura real dos frames de gameplay.
-- [ ] Codificação e gravação de vídeo.
+Test sink is a test double only. Passing tests do not prove gameplay capture, encoding, USB writing, or console compatibility.
