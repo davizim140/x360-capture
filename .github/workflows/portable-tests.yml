@@ -1,10 +1,8 @@
 name: Portable core tests
-
 on:
   push:
   pull_request:
   workflow_dispatch:
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -13,7 +11,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Install C++ compiler
         run: sudo apt-get update && sudo apt-get install -y g++
-      - name: Compile portable tests
+      - name: Compile portable core tests
         run: g++ -std=c++17 -Wall -Wextra -Werror -pedantic src/capture_core.cpp tests/test_capture_core.cpp -o capture-tests
-      - name: Run tests
+      - name: Run core tests
         run: ./capture-tests
+      - name: Compile frame pipeline tests
+        run: g++ -std=c++17 -Wall -Wextra -Werror -pedantic src/capture_core.cpp src/frame_pipeline.cpp tests/test_frame_pipeline.cpp -o frame-pipeline-tests
+      - name: Run frame pipeline tests
+        run: ./frame-pipeline-tests
