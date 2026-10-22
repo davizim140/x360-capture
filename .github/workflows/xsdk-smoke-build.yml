@@ -27,7 +27,7 @@ jobs:
           echo "XSDK_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
       - name: Build xSDK PowerPC toolchain
         working-directory: xsdk
-        run: PREFIX="$HOME/xsdk-gcc" WORK="$HOME/xsdk-gcc-work" JOBS=2 tools/toolchain/build.sh
+        run: PREFIX="$HOME/xsdk-gcc" WORK="$HOME/xsdk-gcc-work" JOBS=2 bash tools/toolchain/build.sh
       - name: Build glslang-xenon shader tools
         run: |
           git clone --depth 1 --branch xenon https://github.com/xenosworks/glslang-xenon.git glslang-xenon
