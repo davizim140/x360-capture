@@ -19,3 +19,7 @@ jobs:
         run: g++ -std=c++17 -Wall -Wextra -Werror -pedantic src/capture_core.cpp src/frame_pipeline.cpp tests/test_frame_pipeline.cpp -o frame-pipeline-tests
       - name: Run frame pipeline tests
         run: ./frame-pipeline-tests
+      - name: Compile 480p resize tests
+        run: g++ -std=c++17 -Wall -Wextra -Werror -pedantic src/capture_core.cpp src/frame_pipeline.cpp src/frame_480p.cpp tests/test_frame_480p.cpp -o frame-480p-tests
+      - name: Run 480p resize tests
+        run: ./frame-480p-tests
