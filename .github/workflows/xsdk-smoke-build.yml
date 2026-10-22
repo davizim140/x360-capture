@@ -21,6 +21,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential bison flex texinfo libgmp-dev libmpfr-dev libmpc-dev curl xz-utils patch python3 cmake ninja-build git
+      - name: Restore cached xSDK PowerPC toolchain
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/xsdk-gcc
+            ~/xsdk-gcc-work
+          key: xsdk-powerpc-${{ runner.os }}-57b02f1e60667e37d22c3aa613d23d2486514ff8-v1
       - name: Check out xSDK at pinned revision
         run: |
           git clone https://github.com/xenosworks/xsdk.git xsdk
@@ -29,24 +36,24 @@ jobs:
           echo "XSDK_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
       - name: Build xSDK PowerPC toolchain
         working-directory: xsdk
-        run: PREFIX="$HOME/xsdk-gcc" WORK="$HOME/xsdk-gcc-work" JOBS=2 bash tools/toolchain/build.sh
+        run: PREFIX="$HOME/xsdk-gcc" WORK="$HOME/xsdk-gcc-work" JOBS="$(nproc)" bash tools/toolchain/build.sh
       - name: Build glslang-xenon shader tools
         run: |
           git clone --depth 1 --branch xenon https://github.com/xenosworks/glslang-xenon.git glslang-xenon
           cd glslang-xenon
           python3 update_glslang_sources.py
           cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_OPT=ON -DSPIRV_SKIP_EXECUTABLES=ON -DGLSLANG_TESTS=OFF
-          cmake --build build --parallel 2
+          cmake --build build --parallel "$(nproc)"
       - name: Build xSDK library
         working-directory: xsdk
-        run: make -j2 TOOLCHAIN="$HOME/xsdk-gcc/bin/powerpc-xsdk-elf-"
+        run: make -j"$(nproc)" TOOLCHAIN="$HOME/xsdk-gcc/bin/powerpc-xsdk-elf-"
       - name: Configure X360 Capture smoke title
         run: |
           cmake -S platform/xsdk-smoke -B build-xex -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/xsdk/cmake/xsdk.cmake" \
             -DXSDK_TOOLCHAIN="$HOME/xsdk-gcc" -DCMAKE_BUILD_TYPE=Release
       - name: Compile XEX
-        run: cmake --build build-xex --parallel 2
+        run: cmake --build build-xex --parallel "$(nproc)"
       - name: Verify artifact exists and report metadata
         run: |
           test -s build-xex/x360_capture_sdk_smoke.xex
