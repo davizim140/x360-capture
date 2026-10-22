@@ -45,6 +45,8 @@ jobs:
           python3 update_glslang_sources.py
           cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_OPT=ON -DSPIRV_SKIP_EXECUTABLES=ON -DGLSLANG_TESTS=OFF
           cmake --build build --parallel "$(nproc)"
+          install -D build/StandAlone/glslang "$HOME/xsdk-gcc/bin/glslang"
+          "$HOME/xsdk-gcc/bin/glslang" --version
       - name: Build xSDK library
         working-directory: xsdk
         run: make -j"$(nproc)" TOOLCHAIN="$HOME/xsdk-gcc/bin/powerpc-xsdk-elf-"
