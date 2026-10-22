@@ -2,6 +2,7 @@
 // This validates only pixels rendered by this probe XEX, never another game's framebuffer.
 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -45,6 +46,7 @@ static const XsdkVertexElement layout[] = {
 
 static void check_frame(uint32_t address, uint32_t width, uint32_t height, uint32_t turn, const char *name);
 static void log_checks(void);
+static void write_probe_report(void);
 
 // Corner i takes colour (i + turn) % 3.
 static void write_vertices(volatile uint32_t *vertices, uint32_t turn)
