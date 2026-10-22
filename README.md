@@ -1,10 +1,16 @@
-# X360 Capture — Stage 4
+# X360 Capture — Stage 5
 
-Portable C++ groundwork for an Xbox 360 RGH/Aurora capture homebrew. Stage 4 adds a tested nearest-neighbor RGBA frame resize utility targeting 640x480 (480p).
+Portable C++ groundwork for an Xbox 360 RGH/Aurora capture homebrew. The project has a recorder state machine, RGBA frame validation, abstract source/sink interfaces, and a tested nearest-neighbor resize utility targeting 640x480.
 
-This is still only a portable frame-processing component. Platform implementations are not included: the project does **not** yet capture another game's framebuffer, encode video, write recordings to USB, or produce a working `.xex`.
+**SDK target:** [xenosworks/xsdk](https://github.com/xenosworks/xsdk), an open-source Xbox 360 homebrew SDK (MIT). This is not the proprietary Microsoft Xbox 360 XDK.
 
-## Run tests
+The project does **not** yet capture another game's framebuffer, encode video, write recordings to USB, or produce a verified working .xex.
+
+## Tests
+
+GitHub Actions compiles and runs the portable core, frame-contract, and 480p-resize tests. See [Actions](https://github.com/davizim140/x360-capture/actions).
+
+For local reproduction:
 
 ```sh
 g++ -std=c++17 -Wall -Wextra -Werror -pedantic src/capture_core.cpp tests/test_capture_core.cpp -o capture-tests
@@ -15,10 +21,8 @@ g++ -std=c++17 -Wall -Wextra -Werror -pedantic src/capture_core.cpp src/frame_pi
 ./frame-480p-tests
 ```
 
-GitHub Actions runs all three test suites on pushes and pull requests.
+## Integration status
 
-## Integration constraints
+See [docs/xsdk-integration.md](docs/xsdk-integration.md) for the xSDK-specific plan and important distinction between a title rendering its own buffers and capturing another game's framebuffer.
 
-A platform-specific frame source and output sink must be implemented and verified with a real Xbox 360 toolchain. An independent homebrew cannot assume it can read the final framebuffer of another running title; demonstrate this capability on hardware or with a documented SDK capability before claiming gameplay capture works.
-
-The 480p resize utility uses nearest-neighbor sampling for predictable, low-cost processing. It is not a video encoder and does not write to USB.
+The upstream xSDK build guide currently requires WSL 2 and substantial disk space. A GitHub Actions build is not yet configured or verified. Portable test success is not evidence of Xbox 360 compatibility.
