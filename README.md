@@ -1,23 +1,18 @@
-# X360 Capture — etapa 2: testes automáticos
+# X360 Capture — Stage 3
 
-Esta etapa adiciona um workflow do GitHub Actions para compilar e executar os testes portáveis do núcleo C++.
+Portable C++ groundwork for an Xbox 360 RGH/Aurora capture homebrew. This stage adds a validated RGBA `FrameView` contract and abstract `FrameSource`/`FrameSink` interfaces. Platform implementations are not included: this project does **not** yet capture another game's framebuffer, encode video, write to USB, or produce a working `.xex`.
 
-## Estado honesto
-- O workflow testa apenas a lógica portátil.
-- Não compila um `.xex`.
-- Ainda não há captura de gameplay, codificador de vídeo ou gravação USB no console.
+## Run tests
 
-## Teste local
 ```sh
 g++ -std=c++17 -Wall -Wextra -Werror -pedantic src/capture_core.cpp tests/test_capture_core.cpp -o capture-tests
 ./capture-tests
+g++ -std=c++17 -Wall -Wextra -Werror -pedantic src/capture_core.cpp src/frame_pipeline.cpp tests/test_frame_pipeline.cpp -o frame-pipeline-tests
+./frame-pipeline-tests
 ```
 
-## Publicar no GitHub pelo navegador
-1. Crie um repositório chamado `x360-capture` no GitHub.
-2. Envie os arquivos deste ZIP para a raiz do repositório, incluindo a pasta `.github/workflows`.
-3. Abra **Actions**. O workflow `Portable core tests` executa automaticamente após o push.
-4. Confirme que o job fica verde e que os testes mostram `7/7 tests passed`.
+GitHub Actions runs both suites on pushes and pull requests.
 
-## Próxima integração Xbox 360
-O SDK de referência é https://github.com/xenosworks/xsdk. A integração com um template de título e as APIs específicas do console deve ser validada separadamente. Não marque um `.xex` como produzido sem um artefato real e log de compilação.
+## Integration constraint
+
+A platform-specific frame source and output sink must be implemented and verified with a real Xbox 360 toolchain. An independent homebrew cannot assume it can read the final framebuffer of another running title; demonstrate this capability on hardware or with a documented SDK capability before claiming gameplay capture works.
