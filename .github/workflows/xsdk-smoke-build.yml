@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - "platform/xsdk-smoke/**"
+      - "platform/xsdk-gpu-probe/**"
       - ".github/workflows/xsdk-smoke-build.yml"
 
 permissions:
@@ -52,13 +53,18 @@ jobs:
           cmake -S platform/xsdk-smoke -B build-xex -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/xsdk/cmake/xsdk.cmake" \
             -DXSDK_TOOLCHAIN="$HOME/xsdk-gcc" -DCMAKE_BUILD_TYPE=Release
-      - name: Compile XEX
-        run: cmake --build build-xex --parallel "$(nproc)"
+      - name: Configure own-title GPU readback probe
+        run: cmake -S platform/xsdk-gpu-probe -B build-gpu-probe -G Ninja -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/xsdk/cmake/xsdk.cmake" -DXSDK_TOOLCHAIN="$HOME/xsdk-gcc" -DCMAKE_BUILD_TYPE=Release
+      - name: Compile XEX titles
+        run: |
+          cmake --build build-xex --parallel "$(nproc)"
+          cmake --build build-gpu-probe --parallel "$(nproc)"
       - name: Verify artifact exists and report metadata
         run: |
           test -s build-xex/x360_capture_sdk_smoke.xex
-          file build-xex/x360_capture_sdk_smoke.xex
-          sha256sum build-xex/x360_capture_sdk_smoke.xex | tee build-xex/SHA256SUMS.txt
+          test -s build-gpu-probe/x360_capture_gpu_probe.xex
+          file build-xex/x360_capture_sdk_smoke.xex build-gpu-probe/x360_capture_gpu_probe.xex
+          sha256sum build-xex/x360_capture_sdk_smoke.xex build-gpu-probe/x360_capture_gpu_probe.xex | tee build-xex/SHA256SUMS.txt
           printf 'xSDK commit: %s\\n' "$XSDK_COMMIT" | tee build-xex/BUILD-INFO.txt
       - name: Upload XEX build artifact
         uses: actions/upload-artifact@v4
@@ -66,6 +72,7 @@ jobs:
           name: x360-capture-xsdk-smoke-${{ github.run_number }}
           path: |
             build-xex/x360_capture_sdk_smoke.xex
+            build-gpu-probe/x360_capture_gpu_probe.xex
             build-xex/SHA256SUMS.txt
             build-xex/BUILD-INFO.txt
           if-no-files-found: error
