@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "triangle_shaders.h"
+#include "x360_capture_gpu_probe_shaders.h"
 #include "xsdk/gpu.h"
 #include "xsdk/kernel.h"
 #include "xsdk/log.h"
